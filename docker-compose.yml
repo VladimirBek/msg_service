@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    command: bash -c "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    volumes:
+      - ./:/app/
+    ports:
+      - 8000:8000
+    depends_on:
+      - mongo
+    networks:
+      - default
+
+  bot:
+    build: .
+    command: bash -c "python3 bot.py"
+    volumes:
+      - ./:/app/
+    depends_on:
+      - mongo
+    networks:
+      - default
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_DB: ${MONGO_DB}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ADMIN_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ADMIN_PASSWORD}
+    ports:
+      - ${MONGO_PORT}:${MONGO_PORT}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - default
+
+volumes:
+  mongo_data:
+
+networks:
+  default:
+    driver: bridge
