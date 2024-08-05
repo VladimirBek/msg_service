@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     BOT_TOKEN: str
     MONGODB_DSN: Optional[str] = None
 
+    REDIS_HOST: str
+
     @field_validator("MONGODB_DSN")
     @classmethod
     def validate_mongodb_dsn(cls, v: Optional[str], info: FieldValidationInfo):

@@ -48,6 +48,12 @@ services:
       - bot
       - mongo
 
+  redis:
+    image: redis
+    restart: always
+    networks:
+      - default
+
 volumes:
   mongo_data:
 

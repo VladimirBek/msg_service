@@ -47,8 +47,12 @@ class UserHandler:
         """ Хэндлер для команды показать все сообщения """
         async with httpx.AsyncClient() as client:
             messages = await client.get(f"http://nginx:8080/api/v1/message/")
+            if messages.status_code != 200:
+                await message.answer("Сообщений нет")
+                return
         await message.answer("Вот все сообщения:")
         for m in messages.json():
+            print(m)
             await message.answer(f"sender: {m['user']['username'], m['user']['first_name'], m['user']['last_name']}\n"
                                  f"{m['text']}\n"
                                  f"{m['created_at']}"

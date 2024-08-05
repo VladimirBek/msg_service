@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from app.core.value_objects.object_id_pydantic import ObjectIdPydanticAnnotation
 from app.message.application.models.message import Message
+from app.message.domain.entity.message import MessageEntity
 from app.user.application.models.user import User
 from app.user.domain.entity.user import UserEntity
 
@@ -39,6 +40,14 @@ class MessageReadModel(BaseMessage):
                 text=document.text,
                 created_at=document.created_at
             )
+    @staticmethod
+    async def from_entity(entity: MessageEntity):
+        return MessageReadModel(
+            id=entity.id,
+            user=entity.user,
+            text=entity.text,
+            created_at=entity.created_at
+        )
     class Config:
         arbitrary_types_allowed = True
 
