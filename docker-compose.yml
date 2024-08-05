@@ -1,0 +1,62 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    command: uvicorn app.run_app:app --host 0.0.0.0 --port 8000
+    volumes:
+      - ./:/app/
+    ports:
+      - 8000:8000
+    depends_on:
+      - mongo
+    networks:
+      - default
+
+  bot:
+    build: .
+    command: bash -c "python3 bot/run_bot.py"
+    volumes:
+      - ./:/app/
+    depends_on:
+      - mongo
+    networks:
+      - default
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_DB: ${MONGODB_DB}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+    ports:
+      - ${MONGODB_PORT}:${MONGODB_PORT}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - default
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx_config.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - web
+      - bot
+      - mongo
+
+  redis:
+    image: redis
+    restart: always
+    networks:
+      - default
+
+volumes:
+  mongo_data:
+
+networks:
+  default:
+    driver: bridge
