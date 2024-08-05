@@ -22,7 +22,7 @@ class BaseRepository(ABC, Generic[_T]):
         raise NotImplementedError()
 
     @abstractmethod
-    def update(self, entity: _T) -> _T:
+    def update(self, id_, data) -> _T:
         raise NotImplementedError()
 
     @abstractmethod
